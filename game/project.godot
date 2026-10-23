@@ -1,0 +1,32 @@
+; Engine configuration file.
+
+config_version=5
+
+[application]
+
+config/name="VibeNature"
+config/version="0.1.0"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+run/low_processor_mode=true
+
+[display]
+
+window/size/viewport_width=320
+window/size/viewport_height=160
+window/size/borderless=true
+window/size/transparent=true
+window/size/no_focus=true
+window/per_pixel_transparency/allowed=true
+window/subwindows/embed_subwindows=false
+
+[rendering]
+
+viewport/transparent_background=true
+
+textures/canvas_textures/default_texture_filter=0
+textures/vram_compression/import_etc2_astc=true
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true

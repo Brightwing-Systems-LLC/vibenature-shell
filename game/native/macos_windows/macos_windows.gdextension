@@ -1,0 +1,10 @@
+[configuration]
+
+entry_symbol = "vibenature_macos_windows_init"
+compatibility_minimum = "4.5"
+reloadable = false
+
+[libraries]
+
+macos.debug = "res://native/macos_windows/bin/libvibenature_macos_windows.dylib"
+macos.release = "res://native/macos_windows/bin/libvibenature_macos_windows.dylib"

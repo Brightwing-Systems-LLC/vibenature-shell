@@ -1,0 +1,72 @@
+#!/bin/sh
+# VibeNature's agent hook (contract §2), one adapter per harness. Hook entries call it as
+# (`just hook-install` writes them):
+#     vibenature-hook <ClaudeCodeEvent>          from ~/.claude/settings.json
+#     vibenature-hook codex <CodexEvent>         from ~/.codex/hooks.json
+# The event name comes from that argument. From the hook's JSON on stdin it reads only the
+# session id: the first `"session_id": "<id>"` in the first 4 KB; the rest is discarded unread.
+# The id is hashed with this install's salt (~/.vibenature/salt, 32 random bytes made once,
+# never sent) and only {kind, source, session_hash, ts} goes to 127.0.0.1:47474.
+# It prints nothing (Codex reads a Stop hook's stdout as a decision; Claude Code adds some
+# hooks' stdout to the conversation), never takes more than ~200 ms, and always exits 0.
+
+if [ "${1:-}" = codex ]; then
+	source=codex
+	case "${2:-}" in
+		SessionStart) kind=session_start ;;
+		UserPromptSubmit) kind=turn_start ;;
+		Stop | Interrupt) kind=turn_end ;;
+		PermissionRequest) kind=needs_input ;;
+		SessionEnd) kind=session_end ;;
+		*) cat >/dev/null 2>&1; exit 0 ;;
+	esac
+else
+	source=claude_code
+	case "${1:-}" in
+		SessionStart) kind=session_start ;;
+		UserPromptSubmit) kind=turn_start ;;
+		# A keep-alive (issues 236, 308): a tool finished, so the turn is still running. A kind of
+		# its own, so the game never takes it for a hand-off. Only the session id is read, as for
+		# every event; the tool's input and output are discarded unread.
+		PostToolUse) kind=still_busy ;;
+		Stop | StopFailure) kind=turn_end ;;
+		PostToolUseFailure) kind=tool_fail ;;
+		Notification) kind=needs_input ;;
+		SessionEnd) kind=session_end ;;
+		*) cat >/dev/null 2>&1; exit 0 ;;
+	esac
+fi
+
+sid=$(head -c 4096 2>/dev/null | tr -d '\n\r' | grep -o '"session_id"[[:space:]]*:[[:space:]]*"[A-Za-z0-9._:-]\{1,128\}"' | head -n 1 |
+	sed 's/^.*:[[:space:]]*"\(.*\)"$/\1/')
+cat >/dev/null 2>&1
+[ -n "$sid" ] || exit 0
+
+# The data folder: ~/.vibenature, or the old ~/.skypatch while only it exists (issue 211), so a
+# salt made before the move keeps its hashes and the move is never pre-empted by a new folder.
+home="${VIBENATURE_HOME:-}"
+if [ -z "$home" ]; then
+	home="$HOME/.vibenature"
+	[ ! -e "$home" ] && [ -d "$HOME/.skypatch" ] && [ ! -L "$HOME/.skypatch" ] && home="$HOME/.skypatch"
+fi
+salt="$home/salt"
+if [ ! -s "$salt" ]; then
+	(umask 077 && mkdir -p "$home" && head -c 32 /dev/urandom >"$salt.$$" && mv "$salt.$$" "$salt") >/dev/null 2>&1 || exit 0
+fi
+
+hash=$({ cat "$salt"; printf '%s' "$sid"; } | openssl dgst -sha256 -r 2>/dev/null | cut -c1-16)
+case "$hash" in
+	[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) ;;
+	*) exit 0 ;;
+esac
+
+url="${VIBENATURE_EVENT_URL:-http://127.0.0.1:47474/event}"
+case "$url" in
+	http://127.0.0.1:*/event) ;;
+	*) exit 0 ;;
+esac
+body=$(printf '{"kind":"%s","source":"%s","session_hash":"%s","ts":%s}' "$kind" "$source" "$hash" "$(date +%s)")
+curl -q -s -o /dev/null --noproxy '*' --connect-timeout 0.2 --max-time 0.2 \
+	-H 'Content-Type: application/json' --data-binary "$body" \
+	"$url" >/dev/null 2>&1
+exit 0

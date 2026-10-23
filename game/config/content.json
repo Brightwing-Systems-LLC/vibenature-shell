@@ -1,0 +1,123 @@
+{
+  "patches": {
+  },
+  "shared_tools": [
+    "camera"
+  ],
+  "tools": {
+    "hands": {
+      "color": "f5a097"
+    },
+    "camera": {
+      "color": "3e3546"
+    }
+  },
+  "birds": {
+    "northern_cardinal": {
+      "rarity": "common",
+      "color": "e83b3b"
+    },
+    "carolina_wren": {
+      "rarity": "common",
+      "color": "a77b5b"
+    },
+    "tufted_titmouse": {
+      "rarity": "common",
+      "color": "9babb2"
+    },
+    "carolina_chickadee": {
+      "rarity": "common",
+      "color": "694f62"
+    },
+    "american_robin": {
+      "rarity": "common",
+      "color": "e07438"
+    },
+    "mourning_dove": {
+      "rarity": "common",
+      "color": "c7dcd0"
+    },
+    "eastern_bluebird": {
+      "rarity": "uncommon",
+      "color": "4d65b4"
+    },
+    "blue_jay": {
+      "rarity": "uncommon",
+      "color": "4d9be6"
+    },
+    "cedar_waxwing": {
+      "rarity": "uncommon",
+      "color": "cd683d"
+    },
+    "painted_bunting": {
+      "rarity": "rare",
+      "color": "8fd3ff"
+    },
+    "red_headed_woodpecker": {
+      "rarity": "rare",
+      "color": "ae2334"
+    },
+    "ruby_throated_hummingbird": {
+      "rarity": "uncommon",
+      "color": "1ebc73",
+      "months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    }
+  },
+  "fish": {
+    "bluegill": {
+      "rarity": "common",
+      "asset": "fish_bluegill",
+      "color": "4d9be6"
+    },
+    "pumpkinseed": {
+      "rarity": "common",
+      "asset": "fish_pumpkinseed",
+      "color": "e07438"
+    },
+    "crappie": {
+      "rarity": "common",
+      "asset": "fish_crappie",
+      "color": "9babb2"
+    },
+    "largemouth_bass": {
+      "rarity": "uncommon",
+      "asset": "fish_largemouth_bass",
+      "color": "5daf8d"
+    },
+    "channel_catfish": {
+      "rarity": "uncommon",
+      "asset": "fish_channel_catfish",
+      "color": "625565"
+    },
+    "old_bass": {
+      "rarity": "rare",
+      "asset": "fish_old_bass",
+      "color": "2e222f"
+    }
+  },
+  "flowers": {
+    "zinnia": {
+      "rarity": "common",
+      "color": "f04f78"
+    },
+    "cosmos": {
+      "rarity": "common",
+      "color": "f5a097"
+    },
+    "black_eyed_susan": {
+      "rarity": "common",
+      "color": "f9c22b"
+    },
+    "sunflower": {
+      "rarity": "uncommon",
+      "color": "fbff86"
+    }
+  }
+}

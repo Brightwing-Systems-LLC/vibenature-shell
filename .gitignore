@@ -1,0 +1,9 @@
+.DS_Store
+.env
+.env.*
+game/.godot/
+game/native/*/bin/
+game/packages/
+build/
+__pycache__/
+*.pyc
